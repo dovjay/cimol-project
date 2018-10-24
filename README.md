@@ -1,5 +1,5 @@
 # cimol-project
-Cuci Mobil Project
+Cuci Mobil Project.
 Don't forget to install
 1. sequelize
 2. pg
