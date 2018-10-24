@@ -1,0 +1,26 @@
+{
+  "name": "cimol-project",
+  "version": "1.0.0",
+  "description": "Cuci Mobil Project.\r Don't forget to install\r 1. sequelize\r 2. pg\r 3. express\r 4. ejs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dovjay/cimol-project.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dovjay/cimol-project/issues"
+  },
+  "homepage": "https://github.com/dovjay/cimol-project#readme",
+  "dependencies": {
+    "ejs": "^2.6.1",
+    "express": "^4.16.4",
+    "nodemon": "^1.18.4",
+    "pg": "^7.5.0",
+    "sequelize": "^4.41.0"
+  }
+}
