@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>CiMol Project</title>
+  <link  rel="stylesheet" type="text/css" href="/css/main.css">
+</head>
+<body>
+  <%- include('../partials/header') %>
+  <section>
+    <h1>Welcome to CiMol Project!</h1>
+    <h2>Our Services</h2>
+    <form action="" method="POST">
+      <div id="services">
+        <div class="box">
+          <p>Car Wash</p>
+          <p>Cost: Rp 10000</p>
+          <p>Estimate: 30 menit</p>
+          <div class="check"><input type="checkbox" name="order" value="id">Order</div>
+        </div>
+        <div class="box">
+          <p>Car Wash</p>
+          <p>Cost: Rp 10000</p>
+          <p>Estimate: 30 menit</p>
+          <div class="check"><input type="checkbox" name="order" value="id">Order</div>
+        </div>
+        <div class="box">
+          <p>Car Wash</p>
+          <p>Cost: Rp 10000</p>
+          <p>Estimate: 30 menit</p>
+          <div class="check"><input type="checkbox" name="order" value="id">Order</div>
+        </div>
+      </div>
+      <label for="location">Location</label><br>
+      <input type="text" name="location"><br>
+      <button type="submit">Done</button>
+      <!-- <% data.forEach(element => { %>
+        <div class="box">
+          <p> <% data.name %> </p>
+          <p> <% data.price %> </p>
+          <p> <% data.estimate %> </p>
+          <div><input type="checkbox" name="order" value="id">Order</div>
+        </div>
+      <% }) %> -->
+    </form>
+  </section>
+  <%- include('../partials/footer') %>
+</body>
+</html>
