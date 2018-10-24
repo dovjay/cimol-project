@@ -1,0 +1,89 @@
+a {
+  text-decoration: none;
+}
+* {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, Helvetica, sans-serif;
+}
+header {
+  display: flex;
+  background-color: yellow;
+  padding: 20px;
+}
+header a, header a:visited {
+  color: black;
+}
+header a:hover {
+  color: grey;
+}
+.right-side {
+  margin-left: auto;
+}
+h1 {
+  margin: 50px;
+  font-size: 3em;
+}
+h2 {
+  margin: 30px;
+  font-size: 2em;
+}
+section {
+  margin: 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 38vw;
+}
+.box {
+  border: 3px solid black;
+  padding: 20px;
+  width: 200px;
+  display: grid;
+}
+.box p {
+  text-align: center;
+}
+.check {
+  border: 1px solid black;
+  padding: 5px;
+  text-align: center;
+  background-color: blue;
+  color: white;
+}
+button {
+  margin-top: 10px;
+  padding: 10px;
+  background-color: blue;
+  border: 1px solid black;
+  color: white;
+  font-size: 1em;
+}
+button:hover {
+  background-color: darkblue;
+}
+button:active {
+  position: relative;
+  top: 1px;
+  left: 1px;
+}
+#services {
+  padding: 20px;
+  display: grid;
+  grid-template-columns: repeat(3, 300px);
+  grid-gap: 10px;
+  justify-items: center;
+}
+form {
+  border: 3px solid black;
+  border-radius: 20px;
+  padding: 50px;
+  font-size: 1.2em;
+  text-align: center;
+}
+footer {
+  background-color: black;
+  color: white;
+  padding: 30px;
+  text-align: center;
+}
