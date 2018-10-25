@@ -1,4 +1,4 @@
-const router = require ('express').Router()
+const router = require('express').Router()
 const Controller = require('../controller/index')
 const middleware = require('../middleware/index')
 
@@ -47,10 +47,14 @@ router.post('/washer/login', Controller.sessionLoginWasher)
 router.get('/logout', Controller.logout)
 
 //Transaction
-router.post('/transaction',middleware.User, Controller.renderTransaction)
+router.post('/transaction', middleware.User, Controller.renderTransaction)
+router.get('/confirmation')
+router.get('/order/cancel', Controller.cancelOrder)
+router.get('/order/delete/:id', Controller.deleteOrder)
 
 
 // Logout Pleasssseee
 router.get('/logout', Controller.logout)
+
 
 module.exports = router
