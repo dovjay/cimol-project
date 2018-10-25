@@ -82,7 +82,8 @@ class Controller {
             })
     }
     static loginUser(req, res) {
-        res.render('pages/login_user')
+        let err
+        res.render('pages/login_user', {err})
     }
     static postLoginUser(req,res){
         Model.User.findOne({
@@ -93,15 +94,16 @@ class Controller {
         .then((data)=>{
             if (req.body.username == data.username && req.body.password == data.password){
                 req.session.role = 'user'
-                req.session.idUser = data.dataValues.id
+                req.session.identifier = data.dataValues.id
                 console.log(req.session)
                 res.redirect('/')
             }else{
-                res.send('Wrong Password')
+                let err = 'username atau password salah!'
+                res.render('pages/login_user', {err})
             }
         })
         .catch((err)=>{
-            res.send(' wrong username')
+            res.send(err)
         })
     }
     // SERVICE
@@ -144,19 +146,41 @@ class Controller {
             })
     }
     static loginWasher(req, res) {
-        res.render('pages/login_washer')
+        let err
+        res.render('pages/login_washer', {err})
     }
     static sessionLoginWasher(req, res) {
         let username = req.body.username
         let password = req.body.password
-        req.session.role = 'washer'
-        console.log(req.session)
-        res.redirect('/')
+        Model.Washer.find({where: {username: username, password: password}})
+            .then(data => {
+                if (data) {
+                    req.session.role = 'washer'
+                    req.session.identifier = data.dataValues.id
+                    res.redirect('/')
+                } else {
+                    let err = 'username atau password salah!'
+                    res.render('pages/login_washer', {err})
+                }
+            })
+            .catch(err => {
+                res.send('login gagal')
+            })
     }
     static getWasherOrderList(req, res) {
-        Model.Transaction.findAll({where: {complete: 0, WasherId: null}})
+        Model.User.findAll({
+            include: [{
+                model: Model.Service,
+                through: {
+                    where: {complete: 0}
+                }
+            }]
+        })
             .then(data => {
                 res.send(data)
+            })
+            .catch(err => {
+                res.send(err)
             })
     }
 
