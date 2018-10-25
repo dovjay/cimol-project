@@ -4,11 +4,16 @@ class Controller {
 
     //Home
     static toHome(req, res) {
+        let sessionRole = req.session.role
         Model.Service.findAll()
             .then(data => {
                 let sessionRole = req.session.role
                 res.render('pages', { data, sessionRole })
             })
+    }
+    static logout(req, res) {
+        req.session.role = undefined
+        res.redirect('/')
     }
 
     // logout pleassseee
@@ -77,7 +82,8 @@ class Controller {
             })
     }
     static loginUser(req, res) {
-        res.render('pages/login_user')
+        let err
+        res.render('pages/login_user', { err })
     }
     static postLoginUser(req, res) {
         Model.User.findOne({
@@ -88,15 +94,16 @@ class Controller {
             .then((data) => {
                 if (req.body.username == data.username && req.body.password == data.password) {
                     req.session.role = 'user'
-                    req.session.idUser = data.dataValues.id
+                    req.session.identifier = data.dataValues.id
                     console.log(req.session)
                     res.redirect('/')
                 } else {
-                    res.send('Wrong Password')
+                    let err = 'username atau password salah!'
+                    res.render('pages/login_user', { err })
                 }
             })
             .catch((err) => {
-                res.send(' wrong username')
+                res.send(err)
             })
     }
     // SERVICE
@@ -139,41 +146,88 @@ class Controller {
             })
     }
     static loginWasher(req, res) {
-        res.render('pages/login_washer')
+        let err
+        res.render('pages/login_washer', { err })
     }
     static sessionLoginWasher(req, res) {
         let username = req.body.username
         let password = req.body.password
-        req.session.role = 'washer'
-        console.log(req.session)
-        res.redirect('/')
+        Model.Washer.find({ where: { username: username, password: password } })
+            .then(data => {
+                if (data) {
+                    req.session.role = 'washer'
+                    req.session.identifier = data.dataValues.id
+                    res.redirect('/')
+                } else {
+                    let err = 'username atau password salah!'
+                    res.render('pages/login_washer', { err })
+                }
+            })
+            .catch(err => {
+                res.send('login gagal')
+            })
+    }
+    static getWasherOrderList(req, res) {
+        Model.User.findAll({
+            include: [{
+                model: Model.Service,
+                through: {
+                    where: { complete: 0 }
+                }
+            }]
+        })
+            .then(data => {
+                res.send(data)
+            })
+            .catch(err => {
+                res.send(err)
+            })
     }
 
     //Transaction
     static renderTransaction(req, res) {
-        // ini harusnya pake helper
-        let result = []
-        for (let i = 0; i < req.body.order.length; i++) {
-            let obj = {}
-            obj.UserId = req.session.idUser
-            obj.ServiceId = Number(req.body.order[i])
-            obj.WasherId = null
-            result.push(obj)
-        }
-        if (typeof req.body.order == 'Object') {
-            Promise.all([Model.Transaction.bulkCreate(result), Model.Transaction.findAll({ where: { UserId: req.session.idUser } })])
-                .then((data) => {
-                    res.send(data)
-                })
+        if (req.body.order == undefined) {
+            res.send('silahkan masukan pesanan yang anda inginkan')
         } else {
-            Promise.all([Model.Transaction.create({
-                UserId: req.session.idUser,
-                ServiceId: Number(req.body.order),
-                WasherId: null
-            }), Model.Transaction.findAll({ where: { UserId: req.session.idUser } })])
-                .then((data) => {
-                    res.send(data)
+            if (req.body.order.length == 1) {
+                Model.Transaction.create({
+                    UserId: req.session.identifier,
+                    ServiceId: Number(req.body.order),
+                    WasherId: null
                 })
+                    .then((data) => {
+                        Model.User.findById(req.session.identifier, {
+                            include: Model.Service
+                        })
+                            .then((services) => {
+                                res.send(services)
+                            })
+                    })
+                    .catch((err) => {
+                        res.send(err)
+                    })
+            } else {
+                let result = []
+                for (let i = 0; i < req.body.order.length; i++) {
+                    let obj = {}
+                    obj.UserId = Number(req.session.identifier)
+                    obj.ServiceId = Number(req.body.order[i])
+                    obj.WasherId = null
+                    result.push(obj)
+                }
+                Model.Transaction.bulkCreate(result)
+                    .then((data) => {
+                        Model.User.findById(req.session.identifier, {
+                            include: Model.Service
+                        })
+                            .then((services) => {
+                                res.send(services)
+                            })
+                    })
+                    .catch((err) => {
+                        res.send(err)
+                    })
+            }
         }
     }
 }
