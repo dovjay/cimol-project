@@ -5,6 +5,10 @@
     <% } else if (sessionRole == 'user') { %>
       <a href="/user/order/list">Orders</a>
     <% } %>
-    <a href="/user/add" class="right-side">Sign Up</a> / 
-    <a href="/user/login">Login</a>
+    <% if (!sessionRole) { %>
+      <a href="/user/add" class="right-side">Sign Up</a> / 
+      <a href="/user/login">Login</a>
+    <% } else { %>
+      <a href="/logout" class="right-side">Logout</a>
+    <% } %>
   </header>

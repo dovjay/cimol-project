@@ -27,11 +27,16 @@ router.post('/service/add', Controller.postAddService)
 //Create
 router.get('/washer/add', Controller.renderAddWasher)
 router.post('/washer/add', Controller.postAddWasher)
+
 //Read
+
 
 //Login
 router.get('/washer/login', Controller.loginWasher)
 router.post('/washer/login', Controller.sessionLoginWasher)
 
+
+// Logout Pleasssseee
+router.get('/logout', Controller.logout)
 
 module.exports = router

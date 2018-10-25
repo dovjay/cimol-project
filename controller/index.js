@@ -11,6 +11,10 @@ class Controller {
                 res.render('pages', {data, sessionRole})
             })
     }
+    static logout(req, res) {
+        req.session.role = undefined
+        res.redirect('/')
+    }
 
     //USER
     static addUser(req, res) {
