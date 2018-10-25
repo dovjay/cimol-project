@@ -10,6 +10,12 @@ class Controller {
             })
     }
 
+    // logout pleassseee
+    static logout(req, res) {
+        req.session.role = null
+        res.redirect('/')
+    }
+
     //USER
     static addUser(req, res) {
         res.render('pages/sign_up_user', {})
