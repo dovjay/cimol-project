@@ -4,11 +4,16 @@ class Controller {
 
     //Home
     static toHome(req, res) {
+        let sessionRole = req.session.role
         Model.Service.findAll()
             .then(data => {
                 let sessionRole = req.session.role
                 res.render('pages', {data, sessionRole})
             })
+    }
+    static logout(req, res) {
+        req.session.role = undefined
+        res.redirect('/')
     }
 
     // logout pleassseee
@@ -147,6 +152,12 @@ class Controller {
         req.session.role = 'washer'
         console.log(req.session)
         res.redirect('/')
+    }
+    static getWasherOrderList(req, res) {
+        Model.Transaction.findAll({where: {complete: 0, WasherId: null}})
+            .then(data => {
+                res.send(data)
+            })
     }
 
     //Transaction
