@@ -12,6 +12,7 @@
         <tr>
             <th>Name</th>
             <th>Order</th>
+            <th>Location</th>
             <th>Option</th>
         </tr>
         <% data.forEach(element => { %>
@@ -24,6 +25,9 @@
                         <% }) %>
                     </ol>
                 </td>
+                <% if (element.Services.length > 0) { %>
+                    <td><%= element.Services[0].Transaction.location %></td>
+                <% } %>
                 <td>
                     <form action="/washer/accept/<%=element.id%>" method="POST">
                     <button type="submit">Accept</button></form>

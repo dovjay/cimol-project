@@ -6,6 +6,7 @@ module.exports = (sequelize, DataTypes) => {
     email: DataTypes.STRING,
     username: DataTypes.STRING,
     password: DataTypes.STRING,
+    salt: DataTypes.BLOB
   }, {});
   Washer.associate = function(models) {
     Washer.hasMany(models.Transaction)

@@ -1,4 +1,6 @@
 const Model = require('../models/index')
+const crypto = require('crypto')
+const passwordHash = require('../helpers/passwordHash')
 
 class Controller {
 
@@ -10,14 +12,11 @@ class Controller {
                 res.render('pages', { data, sessionRole })
             })
     }
-    static logout(req, res) {
-        req.session.role = undefined
-        res.redirect('/')
-    }
-
+    
     // logout pleassseee
     static logout(req, res) {
         req.session.role = null
+        req.session.identifier = null
         res.redirect('/')
     }
 
@@ -26,15 +25,19 @@ class Controller {
         res.render('pages/sign_up_user', {})
     }
     static postAddUser(req, res) {
+        let pass = passwordHash(req.body.password)
         let user = new Model.User({
             firstName: req.body.firstname,
             lastName: req.body.lastname,
             email: req.body.email,
             username: req.body.username,
-            password: req.body.password
+            password: pass.password,
+            salt: pass.salt // baru
         })
         user.save()
-            .then((data) => {
+            .then(() => {
+                req.session.role = 'user'
+                req.session.identifier = user.id
                 res.redirect('/')
             })
             .catch((err) => {
@@ -85,25 +88,26 @@ class Controller {
         res.render('pages/login_user', { err })
     }
     static postLoginUser(req, res) {
-        Model.User.findOne({
-            where: {
-                username: req.body.username
-            }
-        })
-            .then((data) => {
-                if (req.body.username == data.username && req.body.password == data.password) {
-                    req.session.role = 'user'
-                    req.session.identifier = data.dataValues.id
-                    req.session.userEmail = data.dataValues.email
-                    console.log(req.session)
-                    res.redirect('/')
-                    // res.send(req.session)
+        let username = req.body.username
+        Model.User.findOne({ where: { username: username } })
+            .then(data => {
+                let pass = passwordHash(req.body.password, data.salt)
+                if (data) {
+                    if (pass.password == data.password) {
+                        req.session.role = 'user'
+                        req.session.identifier = data.dataValues.id
+                        console.log(req.session)
+                        res.redirect('/')   
+                    } else {
+                        let err = 'username atau password salah!'
+                        res.render('pages/login_user', { err })    
+                    }
                 } else {
                     let err = 'username atau password salah!'
                     res.render('pages/login_user', { err })
                 }
             })
-            .catch((err) => {
+            .catch(err => {
                 res.send(err)
             })
     }
@@ -148,16 +152,20 @@ class Controller {
         res.render('pages/sign_up_washer')
     }
     static postAddWasher(req, res) {
+        let pass = passwordHash(req.body.password)
         let washer = new Model.Washer({
             firstName: req.body.firstname,
             lastName: req.body.lastname,
             email: req.body.email,
             username: req.body.username,
-            password: req.body.password
+            password: pass.password,
+            salt: pass.salt // baru
         })
         washer.save()
-            .then((data) => {
-                res.send(data)
+            .then(() => {
+                req.session.role = 'washer'
+                req.session.identifier = washer.id
+                res.redirect('/')
             })
             .catch((err) => {
                 res.send(err)
@@ -169,14 +177,19 @@ class Controller {
     }
     static sessionLoginWasher(req, res) {
         let username = req.body.username
-        let password = req.body.password
-        Model.Washer.find({ where: { username: username, password: password } })
+        Model.Washer.findOne({ where: { username: username } })
             .then(data => {
+                let pass = passwordHash(req.body.password, data.salt)
                 if (data) {
-                    req.session.role = 'washer'
-                    req.session.identifier = data.dataValues.id
-                    console.log(req.session)
-                    res.redirect('/')
+                    if (pass.password == data.password) {
+                        req.session.role = 'washer'
+                        req.session.identifier = data.dataValues.id
+                        console.log(req.session)
+                        res.redirect('/')   
+                    } else {
+                        let err = 'username atau password salah!'
+                        res.render('pages/login_washer', { err })    
+                    }
                 } else {
                     let err = 'username atau password salah!'
                     res.render('pages/login_washer', { err })
@@ -207,17 +220,8 @@ class Controller {
         Model.Transaction.findAll({
             where: { UserId: id }
         })
-            .then(transaction => {
-                let id = Number(req.session.identifier)
-                transaction.forEach(element => {
-                    element.WasherId = id
-                    res.send(element)
-                })
-                res.send(transaction)
-                // return transaction.save()
-            })
             .then(() => {
-                // res.redirect('/washer/workstart')
+                res.redirect('/washer/workstart')
             })
             .catch(err => {
                 res.send(err)
@@ -231,9 +235,12 @@ class Controller {
     }
     static completework(req, res) {
         let id = req.session.identifier
-        Model.Transaction.findAll({ where: { WasherId: id } })
+        Model.Transaction.update(
+            { complete: 1 },
+            {where: {WasherId: id}
+        })
             .then(data => {
-                res.send(data)
+                res.redirect('/')
             })
             .catch(err => {
                 res.send(err)
