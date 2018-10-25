@@ -1,6 +1,6 @@
 const router = require ('express').Router()
 const Controller = require('../controller/index')
-const middleware = require('../midleware/index')
+const middleware = require('../middleware/index')
 
 //home
 router.get('/', Controller.toHome)

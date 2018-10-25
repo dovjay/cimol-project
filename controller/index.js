@@ -169,13 +169,23 @@ class Controller {
 
     //Transaction
     static renderTransaction(req,res){
+       
         let result = []
-        // for (let i=0; i<req.body.length; i++){
-        //     let obj = {}
-        //     obj.UserId = req.session.idUser
-        //     obj.ServiceId= req.body[i].
-        // }
-        res.send(req.body)
+        for (let i=0; i<req.body.order.length; i++){
+            let obj = {}
+            obj.UserId = req.session.idUser
+            obj.ServiceId= Number(req.body.order[i])
+            obj.WasherId = null
+            result.push(obj)
+        }
+        // res.send(result)
+        Model.Transaction.bulkCreate(result)
+            .then((data)=>{
+                res.send(result)
+            })
+            .catch((err)=>{
+                res.send(err)
+            })
     }
 }
 
