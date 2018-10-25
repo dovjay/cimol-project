@@ -153,7 +153,14 @@ class Controller {
         res.redirect('/')
     }
     static getWasherOrderList(req, res) {
-        Model.Transaction.findAll({where: {complete: 0, WasherId: null}})
+        Model.User.findAll({
+            include: [{
+                model: Model.Service,
+                through: {
+                    where: {complete: 0}
+                }
+            }]
+        })
             .then(data => {
                 res.send(data)
             })
