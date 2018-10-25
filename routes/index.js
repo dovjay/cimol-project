@@ -32,7 +32,12 @@ router.post('/washer/add', Controller.postAddWasher)
 
 //Read
 router.get('/washer/order/list/', Controller.getWasherOrderList)
+router.post('/washer/accept/:userId', Controller.acceptOrder)
 
+//Work
+router.get('/washer/workstart', Controller.workstart)
+router.get('/washer/workdone', Controller.workdone)
+router.get('washer/complete', Controller.completework)
 
 //Login
 router.get('/washer/login', Controller.loginWasher)

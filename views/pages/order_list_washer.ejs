@@ -12,7 +12,24 @@
         <tr>
             <th>Name</th>
             <th>Order</th>
+            <th>Option</th>
         </tr>
+        <% data.forEach(element => { %>
+            <tr>
+                <td><%= element.firstName + ' ' + element.lastName %></td>
+                <td>
+                    <ol>
+                        <% element.Services.forEach(theService => { %>
+                            <li><%=theService.name%></li>
+                        <% }) %>
+                    </ol>
+                </td>
+                <td>
+                    <form action="/washer/accept/<%=element.id%>" method="POST">
+                    <button type="submit">Accept</button></form>
+                </td>
+            </tr>
+        <% }) %>
     </table>
 </body>
 </html>
