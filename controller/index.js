@@ -4,11 +4,16 @@ class Controller {
 
     //Home
     static toHome(req, res) {
+        let sessionRole = req.session.role
         Model.Service.findAll()
             .then(data => {
                 let sessionRole = req.session.role
                 res.render('pages', {data, sessionRole})
             })
+    }
+    static logout(req, res) {
+        req.session.role = undefined
+        res.redirect('/')
     }
 
     // logout pleassseee

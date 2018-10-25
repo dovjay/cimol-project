@@ -33,6 +33,7 @@ router.post('/washer/add', Controller.postAddWasher)
 //Read
 router.get('/washer/order/list/', Controller.getWasherOrderList)
 
+
 //Login
 router.get('/washer/login', Controller.loginWasher)
 router.post('/washer/login', Controller.sessionLoginWasher)
@@ -43,5 +44,8 @@ router.get('/logout', Controller.logout)
 //Transaction
 router.post('/transaction',middleware.User, Controller.renderTransaction)
 
+
+// Logout Pleasssseee
+router.get('/logout', Controller.logout)
 
 module.exports = router
