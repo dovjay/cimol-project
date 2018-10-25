@@ -7,7 +7,7 @@ class Controller {
         Model.Service.findAll()
             .then(data => {
                 let sessionRole = req.session.role
-                res.render('pages', {data, sessionRole})
+                res.render('pages', { data, sessionRole })
             })
     }
 
@@ -79,25 +79,25 @@ class Controller {
     static loginUser(req, res) {
         res.render('pages/login_user')
     }
-    static postLoginUser(req,res){
+    static postLoginUser(req, res) {
         Model.User.findOne({
-            where:{
+            where: {
                 username: req.body.username
             }
         })
-        .then((data)=>{
-            if (req.body.username == data.username && req.body.password == data.password){
-                req.session.role = 'user'
-                req.session.idUser = data.dataValues.id
-                console.log(req.session)
-                res.redirect('/')
-            }else{
-                res.send('Wrong Password')
-            }
-        })
-        .catch((err)=>{
-            res.send(' wrong username')
-        })
+            .then((data) => {
+                if (req.body.username == data.username && req.body.password == data.password) {
+                    req.session.role = 'user'
+                    req.session.idUser = data.dataValues.id
+                    console.log(req.session)
+                    res.redirect('/')
+                } else {
+                    res.send('Wrong Password')
+                }
+            })
+            .catch((err) => {
+                res.send(' wrong username')
+            })
     }
     // SERVICE
     static renderAddService(req, res) {
@@ -119,10 +119,10 @@ class Controller {
     }
 
     // WASHER
-    static renderAddWasher(req,res){
+    static renderAddWasher(req, res) {
         res.render('pages/sign_up_washer')
     }
-    static postAddWasher(req,res){
+    static postAddWasher(req, res) {
         let washer = new Model.Washer({
             firstName: req.body.firstname,
             lastName: req.body.lastname,
@@ -131,10 +131,10 @@ class Controller {
             password: req.body.password
         })
         washer.save()
-            .then((data)=>{
+            .then((data) => {
                 res.send(data)
             })
-            .catch((err)=>{
+            .catch((err) => {
                 res.send(err)
             })
     }
@@ -150,24 +150,31 @@ class Controller {
     }
 
     //Transaction
-    static renderTransaction(req,res){
-       
+    static renderTransaction(req, res) {
+        // ini harusnya pake helper
         let result = []
-        for (let i=0; i<req.body.order.length; i++){
+        for (let i = 0; i < req.body.order.length; i++) {
             let obj = {}
             obj.UserId = req.session.idUser
-            obj.ServiceId= Number(req.body.order[i])
+            obj.ServiceId = Number(req.body.order[i])
             obj.WasherId = null
             result.push(obj)
         }
-        // res.send(result)
-        Model.Transaction.bulkCreate(result)
-            .then((data)=>{
-                res.send(result)
-            })
-            .catch((err)=>{
-                res.send(err)
-            })
+        if (typeof req.body.order == 'Object') {
+            Promise.all([Model.Transaction.bulkCreate(result), Model.Transaction.findAll({ where: { UserId: req.session.idUser } })])
+                .then((data) => {
+                    res.send(data)
+                })
+        } else {
+            Promise.all([Model.Transaction.create({
+                UserId: req.session.idUser,
+                ServiceId: Number(req.body.order),
+                WasherId: null
+            }), Model.Transaction.findAll({ where: { UserId: req.session.idUser } })])
+                .then((data) => {
+                    res.send(data)
+                })
+        }
     }
 }
 
