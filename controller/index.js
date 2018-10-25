@@ -6,7 +6,6 @@ class Controller {
     static toHome(req, res) {
         Model.Service.findAll()
             .then(data => {
-                console.log(req.session)
                 res.render('pages', {data})
             })
     }
@@ -25,7 +24,7 @@ class Controller {
         })
         user.save()
             .then((data) => {
-                res.send(data)
+                res.redirect('/')
             })
             .catch((err) => {
                 res.send(err)
@@ -72,6 +71,25 @@ class Controller {
     }
     static loginUser(req, res) {
         res.render('pages/login_user')
+    }
+    static postLoginUser(req,res){
+        Model.User.findOne({
+            where:{
+                username: req.body.username
+            }
+        })
+        .then((data)=>{
+            if (req.body.username == data.username && req.body.password == data.password){
+                req.session.role = 'user'
+                console.log(req.session)
+                res.redirect('/')
+            }else{
+                res.send('Wrong Password')
+            }
+        })
+        .catch((err)=>{
+            res.send(' wrong username')
+        })
     }
     // SERVICE
     static renderAddService(req, res) {
@@ -121,6 +139,11 @@ class Controller {
         req.session.role = 'washer'
         console.log(req.session)
         res.redirect('/')
+    }
+
+    //Transaction
+    static renderTransaction(req,res){
+        res.send(req.body)
     }
 }
 
