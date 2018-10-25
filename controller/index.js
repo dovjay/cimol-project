@@ -4,12 +4,12 @@ class Controller {
 
     //USER
     static addUser(req, res) {
-        res.render('user/addUser', {})
+        res.render('pages/sign_up_user', {})
     }
     static postAddUser(req, res) {
         let user = new Model.User({
-            firstName: req.body.firstName,
-            lastName: req.body.lastName,
+            firstName: req.body.firstname,
+            lastName: req.body.lastname,
             email: req.body.email,
             username: req.body.username,
             password: req.body.password
@@ -44,8 +44,8 @@ class Controller {
     }
     static postUpdateUser(req, res) {
         Model.User.update({
-            firstName: req.body.firstName,
-            lastName: req.body.lastName,
+            firstName: req.body.firstname,
+            lastName: req.body.lastname,
             email: req.body.email,
             username: req.body.username,
             password: req.body.password
@@ -82,12 +82,12 @@ class Controller {
 
     // WASHER
     static renderAddWasher(req,res){
-        res.render('washer/add')
+        res.render('pages/sign_up_washer')
     }
     static postAddWasher(req,res){
         let washer = new Model.Washer({
-            firstName: req.body.firstName,
-            lastName: req.body.lastName,
+            firstName: req.body.firstname,
+            lastName: req.body.lastname,
             email: req.body.email,
             username: req.body.username,
             password: req.body.password
