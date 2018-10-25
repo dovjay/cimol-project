@@ -1,7 +1,9 @@
 <header>
     <a href="/">Home</a>
-    <% if (data.order) { %>
-      <a href="#">Order</a>
+    <% if (sessionRole == 'washer') { %>
+      <a href="/washer/order/list">Orders</a>
+    <% } else if (sessionRole == 'user') { %>
+      <a href="/user/order/list">Orders</a>
     <% } %>
     <a href="/user/add" class="right-side">Sign Up</a> / 
     <a href="/user/login">Login</a>

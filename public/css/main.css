@@ -12,6 +12,7 @@ header {
   padding: 20px;
 }
 header a, header a:visited {
+  margin: 0 10px;
   color: black;
 }
 header a:hover {

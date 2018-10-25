@@ -4,10 +4,11 @@ class Controller {
 
     //Home
     static toHome(req, res) {
+        let sessionRole = req.session.role
         Model.Service.findAll()
             .then(data => {
                 console.log(req.session)
-                res.render('pages', {data})
+                res.render('pages', {data, sessionRole})
             })
     }
 
