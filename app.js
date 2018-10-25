@@ -3,7 +3,6 @@ const app = express()
 const port = 3000
 const routes = require('./routes')
 const session = require('express-session')
-const crypto = require('crypto')
 
 app.set('view engine', 'ejs')
 

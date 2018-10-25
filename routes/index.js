@@ -14,11 +14,11 @@ router.get('/user/read', Controller.renderReadUser)
 //update
 router.get('/user/update/:id', Controller.renderUpdateUser)
 router.post('/user/update/:id', Controller.postUpdateUser)
-//delete
-
 //login
 router.get('/user/login', Controller.loginUser)
 router.post('/user/login', Controller.postLoginUser)
+//order
+router.get('/user/order/list', Controller.renderUserOrder)
 
 //Crud Service
 // Create

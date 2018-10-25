@@ -1,4 +1,6 @@
 const Model = require('../models/index')
+const crypto = require('crypto')
+const passwordHash = require('../helpers/passwordHash')
 
 class Controller {
 
@@ -7,18 +9,14 @@ class Controller {
         Model.Service.findAll()
             .then(data => {
                 let sessionRole = req.session.role
-                res.render('pages', {data, sessionRole})
+                res.render('pages', { data, sessionRole })
             })
     }
-    static logout(req, res) {
-        req.session.role = null
-        req.session.identifier = null
-        res.redirect('/')
-    }
-
+    
     // logout pleassseee
     static logout(req, res) {
         req.session.role = null
+        req.session.identifier = null
         res.redirect('/')
     }
 
@@ -27,15 +25,19 @@ class Controller {
         res.render('pages/sign_up_user', {})
     }
     static postAddUser(req, res) {
+        let pass = passwordHash(req.body.password)
         let user = new Model.User({
             firstName: req.body.firstname,
             lastName: req.body.lastname,
             email: req.body.email,
             username: req.body.username,
-            password: req.body.password
+            password: pass.password,
+            salt: pass.salt // baru
         })
         user.save()
-            .then((data) => {
+            .then(() => {
+                req.session.role = 'user'
+                req.session.identifier = user.id
                 res.redirect('/')
             })
             .catch((err) => {
@@ -83,30 +85,47 @@ class Controller {
     }
     static loginUser(req, res) {
         let err
-        res.render('pages/login_user', {err})
+        res.render('pages/login_user', { err })
     }
-    static postLoginUser(req,res){
-        Model.User.findOne({
-            where:{
-                username: req.body.username
-            }
+    static postLoginUser(req, res) {
+        let username = req.body.username
+        Model.User.findOne({ where: { username: username } })
+            .then(data => {
+                let pass = passwordHash(req.body.password, data.salt)
+                if (data) {
+                    if (pass.password == data.password) {
+                        req.session.role = 'user'
+                        req.session.identifier = data.dataValues.id
+                        console.log(req.session)
+                        res.redirect('/')   
+                    } else {
+                        let err = 'username atau password salah!'
+                        res.render('pages/login_user', { err })    
+                    }
+                } else {
+                    let err = 'username atau password salah!'
+                    res.render('pages/login_user', { err })
+                }
+            })
+            .catch(err => {
+                res.send(err)
+            })
+    }
+    static renderUserOrder(req,res){
+        Model.User.findById(req.session.identifier, {
+            include: Model.Service
         })
         .then((data)=>{
-            if (req.body.username == data.username && req.body.password == data.password){
-                req.session.role = 'user'
-                req.session.identifier = data.dataValues.id
-                console.log(req.session)
-                res.redirect('/')
+            if (!data.Services[0].Transaction){
+                res.send('Anda belum melakukan order apapun, silahkan pilih servis kami terlebih dahulu')
             }else{
-                let err = 'username atau password salah!'
-                res.render('pages/login_user', {err})
+                res.render('pages/order_list_user', {data:data})
             }
-        })
-        .catch((err)=>{
-            res.send(err)
+            // res.send(data)
         })
     }
-    // SERVICE
+
+        // SERVICE
     static renderAddService(req, res) {
         res.render('service/add')
     }
@@ -126,43 +145,51 @@ class Controller {
     }
 
     // WASHER
-    static renderAddWasher(req,res){
+    static renderAddWasher(req, res) {
         res.render('pages/sign_up_washer')
     }
-    static postAddWasher(req,res){
+    static postAddWasher(req, res) {
+        let pass = passwordHash(req.body.password)
         let washer = new Model.Washer({
             firstName: req.body.firstname,
             lastName: req.body.lastname,
             email: req.body.email,
             username: req.body.username,
-            password: req.body.password,
-            salt: crypto.randomBytes(256) // baru
+            password: pass.password,
+            salt: pass.salt // baru
         })
         washer.save()
-            .then((data)=>{
-                res.send(data)
+            .then(() => {
+                req.session.role = 'washer'
+                req.session.identifier = washer.id
+                res.redirect('/')
             })
-            .catch((err)=>{
+            .catch((err) => {
                 res.send(err)
             })
     }
     static loginWasher(req, res) {
         let err
-        res.render('pages/login_washer', {err})
+        res.render('pages/login_washer', { err })
     }
     static sessionLoginWasher(req, res) {
         let username = req.body.username
-        let password = req.body.password
-        Model.Washer.find({where: {username: username, password: password}})
+        Model.Washer.findOne({ where: { username: username } })
             .then(data => {
+                let pass = passwordHash(req.body.password, data.salt)
                 if (data) {
-                    req.session.role = 'washer'
-                    req.session.identifier = data.dataValues.id
-                    console.log(req.session)
-                    res.redirect('/')
+                    if (pass.password == data.password) {
+                        req.session.role = 'washer'
+                        req.session.identifier = data.dataValues.id
+                        console.log(req.session)
+                        res.redirect('/')   
+                    } else {
+                        let err = 'username atau password salah!'
+                        res.render('pages/login_washer', { err })    
+                    }
                 } else {
                     let err = 'username atau password salah!'
-                    res.render('pages/login_washer', {err})
+                    res.render('pages/login_washer', { err })
                 }
             })
             .catch(err => {
@@ -174,12 +201,12 @@ class Controller {
             include: [{
                 model: Model.Service,
                 through: {
-                    where: {complete: 0}
+                    where: { complete: 0 }
                 }
             }]
         })
             .then(data => {
-                res.render('pages/order_list_washer', {data})
+                res.render('pages/order_list_washer', { data })
             })
             .catch(err => {
                 res.send(err)
@@ -187,10 +214,8 @@ class Controller {
     }
     static acceptOrder(req, res) {
         let id = req.params.userId
-        Model.Transaction.update({
-            WasherId: Number(req.session.identifier)
-        }, {
-            where: {UserId: id}
+        Model.Transaction.findAll({
+            where: { UserId: id }
         })
             .then(() => {
                 res.redirect('/washer/workstart')
@@ -221,24 +246,52 @@ class Controller {
 
 
     //Transaction
-    static renderTransaction(req,res){
-       
-        let result = []
-        for (let i=0; i<req.body.order.length; i++){
-            let obj = {}
-            obj.UserId = req.session.idUser
-            obj.ServiceId= Number(req.body.order[i])
-            obj.WasherId = null
-            result.push(obj)
+    static renderTransaction(req, res) {
+        if (req.body.order == undefined) {
+            res.send('silahkan masukan pesanan yang anda inginkan')
+        } else {
+            if (req.body.order.length == 1) {
+                Model.Transaction.create({
+                    UserId: req.session.identifier,
+                    ServiceId: Number(req.body.order),
+                    WasherId: null,
+                    location: req.body.location
+                })
+                    .then((data) => {
+                        Model.User.findById(req.session.identifier, {
+                            include: Model.Service
+                        })
+                            .then((services) => {
+                                res.render('pages/order_list_user', {data:services})
+                            })
+                    })
+                    .catch((err) => {
+                        res.send(err)
+                    })
+            } else {
+                let result = []
+                for (let i = 0; i < req.body.order.length; i++) {
+                    let obj = {}
+                    obj.UserId = Number(req.session.identifier)
+                    obj.ServiceId = Number(req.body.order[i])
+                    obj.WasherId = null,
+                    obj.location =req.body.location
+                    result.push(obj)
+                }
+                Model.Transaction.bulkCreate(result)
+                    .then((data) => {
+                        Model.User.findById(req.session.identifier, {
+                            include: Model.Service
+                        })
+                            .then((services) => {
+                                res.render('pages/order_list_user', {data:services})
+                            })
+                    })
+                    .catch((err) => {
+                        res.send(err)
+                    })
+            }
         }
-        // res.send(result)
-        Model.Transaction.bulkCreate(result)
-            .then((data)=>{
-                res.send(result)
-            })
-            .catch((err)=>{
-                res.send(err)
-            })
     }
 }
 
