@@ -6,8 +6,15 @@ class Controller {
     static toHome(req, res) {
         Model.Service.findAll()
             .then(data => {
-                res.render('pages', {data})
+                let sessionRole = req.session.role
+                res.render('pages', {data, sessionRole})
             })
+    }
+
+    // logout pleassseee
+    static logout(req, res) {
+        req.session.role = null
+        res.redirect('/')
     }
 
     //USER

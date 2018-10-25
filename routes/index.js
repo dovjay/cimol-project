@@ -35,6 +35,8 @@ router.post('/washer/add', Controller.postAddWasher)
 router.get('/washer/login', Controller.loginWasher)
 router.post('/washer/login', Controller.sessionLoginWasher)
 
+//logout pleasseee
+router.get('/logout', Controller.logout)
 
 //Transaction
 router.post('/transaction',middleware.User, Controller.renderTransaction)
