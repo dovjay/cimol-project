@@ -32,18 +32,18 @@
           <p>Estimate: 30 menit</p>
           <div class="check"><input type="checkbox" name="order" value="id">Order</div>
         </div>
+        <% data.forEach(element => { %>
+          <div class="box">
+            <p> <%= element.name %> </p>
+            <p> <%= element.price %> </p>
+            <p> <%= element.estimate %> </p>
+            <div class="check"><input type="checkbox" name="order" value="<%=element.id%>">Order</div>
+          </div>
+        <% }) %>
       </div>
       <label for="location">Location</label><br>
       <input type="text" name="location"><br>
       <button type="submit">Done</button>
-      <!-- <% data.forEach(element => { %>
-        <div class="box">
-          <p> <% data.name %> </p>
-          <p> <% data.price %> </p>
-          <p> <% data.estimate %> </p>
-          <div><input type="checkbox" name="order" value="id">Order</div>
-        </div>
-      <% }) %> -->
     </form>
   </section>
   <%- include('../partials/footer') %>

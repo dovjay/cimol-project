@@ -2,6 +2,15 @@ const Model = require('../models/index')
 
 class Controller {
 
+    //Home
+    static toHome(req, res) {
+        Model.Service.findAll()
+            .then(data => {
+                console.log(req.session)
+                res.render('pages', {data})
+            })
+    }
+
     //USER
     static addUser(req, res) {
         res.render('pages/sign_up_user', {})
@@ -61,6 +70,9 @@ class Controller {
                 res.send(err)
             })
     }
+    static loginUser(req, res) {
+        res.render('pages/login_user')
+    }
     // SERVICE
     static renderAddService(req, res) {
         res.render('service/add')
@@ -99,6 +111,16 @@ class Controller {
             .catch((err)=>{
                 res.send(err)
             })
+    }
+    static loginWasher(req, res) {
+        res.render('pages/login_washer')
+    }
+    static sessionLoginWasher(req, res) {
+        let username = req.body.username
+        let password = req.body.password
+        req.session.role = 'washer'
+        console.log(req.session)
+        res.redirect('/')
     }
 }
 
