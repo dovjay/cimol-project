@@ -147,6 +147,12 @@ class Controller {
         console.log(req.session)
         res.redirect('/')
     }
+    static getWasherOrderList(req, res) {
+        Model.Transaction.findAll({where: {complete: 0, WasherId: null}})
+            .then(data => {
+                res.send(data)
+            })
+    }
 
     //Transaction
     static renderTransaction(req,res){
