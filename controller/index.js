@@ -81,6 +81,7 @@ class Controller {
         .then((data)=>{
             if (req.body.username == data.username && req.body.password == data.password){
                 req.session.role = 'user'
+                req.session.idUser = data.dataValues.id
                 console.log(req.session)
                 res.redirect('/')
             }else{
@@ -143,6 +144,12 @@ class Controller {
 
     //Transaction
     static renderTransaction(req,res){
+        let result = []
+        // for (let i=0; i<req.body.length; i++){
+        //     let obj = {}
+        //     obj.UserId = req.session.idUser
+        //     obj.ServiceId= req.body[i].
+        // }
         res.send(req.body)
     }
 }
