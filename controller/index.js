@@ -7,12 +7,18 @@ class Controller {
         let sessionRole = req.session.role
         Model.Service.findAll()
             .then(data => {
-                console.log(req.session)
+                let sessionRole = req.session.role
                 res.render('pages', {data, sessionRole})
             })
     }
     static logout(req, res) {
         req.session.role = undefined
+        res.redirect('/')
+    }
+
+    // logout pleassseee
+    static logout(req, res) {
+        req.session.role = null
         res.redirect('/')
     }
 
@@ -30,7 +36,7 @@ class Controller {
         })
         user.save()
             .then((data) => {
-                res.send(data)
+                res.redirect('/')
             })
             .catch((err) => {
                 res.send(err)
@@ -77,6 +83,25 @@ class Controller {
     }
     static loginUser(req, res) {
         res.render('pages/login_user')
+    }
+    static postLoginUser(req,res){
+        Model.User.findOne({
+            where:{
+                username: req.body.username
+            }
+        })
+        .then((data)=>{
+            if (req.body.username == data.username && req.body.password == data.password){
+                req.session.role = 'user'
+                console.log(req.session)
+                res.redirect('/')
+            }else{
+                res.send('Wrong Password')
+            }
+        })
+        .catch((err)=>{
+            res.send(' wrong username')
+        })
     }
     // SERVICE
     static renderAddService(req, res) {
@@ -126,6 +151,17 @@ class Controller {
         req.session.role = 'washer'
         console.log(req.session)
         res.redirect('/')
+    }
+    static getWasherOrderList(req, res) {
+        Model.Transaction.findAll({where: {complete: 0, WasherId: null}})
+            .then(data => {
+                res.send(data)
+            })
+    }
+
+    //Transaction
+    static renderTransaction(req,res){
+        res.send(req.body)
     }
 }
 

@@ -1,5 +1,6 @@
 const router = require ('express').Router()
 const Controller = require('../controller/index')
+const middleware = require('../midleware/index')
 
 //home
 router.get('/', Controller.toHome)
@@ -17,6 +18,7 @@ router.post('/user/update/:id', Controller.postUpdateUser)
 
 //login
 router.get('/user/login', Controller.loginUser)
+router.post('/user/login', Controller.postLoginUser)
 
 //Crud Service
 // Create
@@ -29,11 +31,18 @@ router.get('/washer/add', Controller.renderAddWasher)
 router.post('/washer/add', Controller.postAddWasher)
 
 //Read
+router.get('/washer/order/list/', Controller.getWasherOrderList)
 
 
 //Login
 router.get('/washer/login', Controller.loginWasher)
 router.post('/washer/login', Controller.sessionLoginWasher)
+
+//logout pleasseee
+router.get('/logout', Controller.logout)
+
+//Transaction
+router.post('/transaction',middleware.User, Controller.renderTransaction)
 
 
 // Logout Pleasssseee
