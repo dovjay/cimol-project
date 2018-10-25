@@ -105,8 +105,22 @@ class Controller {
                 res.send(err)
             })
     }
-    // SERVICE
-    static renderAddService(req, res) {
+    static renderUserOrder(req,res){
+        Model.User.findById(req.session.identifier, {
+            include: Model.Service
+        })
+        .then((data)=>{
+            if (!data.Services[0].Transaction){
+                res.send('Anda belum melakukan order apapun, silahkan pilih servis kami terlebih dahulu')
+            }else{
+                res.render('pages/order_list_user', {data:data})
+            }
+            // res.send(data)
+        })
+    }
+
+        // SERVICE
+        static renderAddService(req, res) {
         res.render('service/add')
     }
     static postAddService(req, res) {
@@ -177,7 +191,7 @@ class Controller {
             }]
         })
             .then(data => {
-                res.render('pages/order_list_washer', {data})
+                res.render('pages/order_list_washer', { data })
             })
             .catch(err => {
                 res.send(err)
@@ -186,7 +200,7 @@ class Controller {
     static acceptOrder(req, res) {
         let id = req.params.userId
         Model.Transaction.findAll({
-            where: {UserId: id}
+            where: { UserId: id }
         })
             .then(transaction => {
                 let id = Number(req.session.identifier)
@@ -212,7 +226,7 @@ class Controller {
     }
     static completework(req, res) {
         let id = req.session.identifier
-        Model.Transaction.findAll({where: {WasherId: id}})
+        Model.Transaction.findAll({ where: { WasherId: id } })
             .then(data => {
                 res.send(data)
             })
@@ -231,14 +245,15 @@ class Controller {
                 Model.Transaction.create({
                     UserId: req.session.identifier,
                     ServiceId: Number(req.body.order),
-                    WasherId: null
+                    WasherId: null,
+                    location: req.body.location
                 })
                     .then((data) => {
                         Model.User.findById(req.session.identifier, {
                             include: Model.Service
                         })
                             .then((services) => {
-                                res.send(services)
+                                res.render('pages/order_list_user', {data:services})
                             })
                     })
                     .catch((err) => {
@@ -250,7 +265,8 @@ class Controller {
                     let obj = {}
                     obj.UserId = Number(req.session.identifier)
                     obj.ServiceId = Number(req.body.order[i])
-                    obj.WasherId = null
+                    obj.WasherId = null,
+                    obj.location =req.body.location
                     result.push(obj)
                 }
                 Model.Transaction.bulkCreate(result)
@@ -259,7 +275,7 @@ class Controller {
                             include: Model.Service
                         })
                             .then((services) => {
-                                res.send(services)
+                                res.render('pages/order_list_user', {data:services})
                             })
                     })
                     .catch((err) => {
