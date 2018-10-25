@@ -94,8 +94,10 @@ class Controller {
                 if (req.body.username == data.username && req.body.password == data.password) {
                     req.session.role = 'user'
                     req.session.identifier = data.dataValues.id
+                    req.session.userEmail = data.dataValues.email
                     console.log(req.session)
                     res.redirect('/')
+                    // res.send(req.session)
                 } else {
                     let err = 'username atau password salah!'
                     res.render('pages/login_user', { err })
@@ -105,22 +107,25 @@ class Controller {
                 res.send(err)
             })
     }
-    static renderUserOrder(req,res){
+    static renderUserOrder(req, res) {
         Model.User.findById(req.session.identifier, {
             include: Model.Service
         })
-        .then((data)=>{
-            if (!data.Services[0].Transaction){
-                res.send('Anda belum melakukan order apapun, silahkan pilih servis kami terlebih dahulu')
-            }else{
-                res.render('pages/order_list_user', {data:data})
-            }
-            // res.send(data)
-        })
+            .then((data) => {
+                if (!data.Services[0].Transaction) {
+                    res.send('Anda belum melakukan order apapun, silahkan pilih servis kami terlebih dahulu')
+                } else {
+                    res.render('pages/order_list_user', { data: data })
+                }
+                // res.send(data)
+            })
+            .catch((err) => {
+                res.send('anda belum melakukan order apapun')
+            })
     }
 
-        // SERVICE
-        static renderAddService(req, res) {
+    // SERVICE
+    static renderAddService(req, res) {
         res.render('service/add')
     }
     static postAddService(req, res) {
@@ -238,6 +243,8 @@ class Controller {
 
     //Transaction
     static renderTransaction(req, res) {
+
+
         if (req.body.order == undefined) {
             res.send('silahkan masukan pesanan yang anda inginkan')
         } else {
@@ -253,7 +260,8 @@ class Controller {
                             include: Model.Service
                         })
                             .then((services) => {
-                                res.render('pages/order_list_user', {data:services})
+                                res.render('pages/user_confirmation', { data: services, email: req.session.userEmail })
+                                // res.send(services)
                             })
                     })
                     .catch((err) => {
@@ -266,7 +274,7 @@ class Controller {
                     obj.UserId = Number(req.session.identifier)
                     obj.ServiceId = Number(req.body.order[i])
                     obj.WasherId = null,
-                    obj.location =req.body.location
+                        obj.location = req.body.location
                     result.push(obj)
                 }
                 Model.Transaction.bulkCreate(result)
@@ -275,7 +283,7 @@ class Controller {
                             include: Model.Service
                         })
                             .then((services) => {
-                                res.render('pages/order_list_user', {data:services})
+                                res.render('pages/user_confirmation', { data: services, email: req.session.userEmail })
                             })
                     })
                     .catch((err) => {
@@ -283,6 +291,40 @@ class Controller {
                     })
             }
         }
+    }
+
+    static deleteOrder(req, res) {
+        // res.send(req.session.email)
+        Model.Transaction.destroy({
+            where: {
+                ServiceId: req.params.id,
+                UserId: req.session.identifier
+            }
+        })
+            .then((data) => {
+                Model.User.findById(req.session.identifier, {
+                    include: Model.Service
+                })
+                    .then((data) => {
+                        res.render('pages/user_confirmation', { data: data, email: req.session.userEmail })
+                    })
+
+                // res.send('success')
+            })
+            .catch((err) => {
+                res.semd(err)
+            })
+    }
+
+    static cancelOrder(req, res) {
+        Model.Transaction.destroy({
+            where: {
+                UserId: req.session.identifier
+            }
+        })
+            .then((data) => {
+                res.redirect('/')
+            })
     }
 }
 
