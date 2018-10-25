@@ -18,9 +18,10 @@ router.get('/service/add', Controller.renderAddService)
 router.post('/service/add', Controller.postAddService)
 
 //Crud Washer
+//Create
 router.get('/washer/add', Controller.renderAddWasher)
 router.post('/washer/add', Controller.postAddWasher)
-
+//Read
 
 
 

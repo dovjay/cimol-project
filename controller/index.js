@@ -12,8 +12,7 @@ class Controller {
             lastName: req.body.lastName,
             email: req.body.email,
             username: req.body.username,
-            password: req.body.password,
-            role: req.body.role
+            password: req.body.password
         })
         user.save()
             .then((data) => {
@@ -91,8 +90,7 @@ class Controller {
             lastName: req.body.lastName,
             email: req.body.email,
             username: req.body.username,
-            password: req.body.password,
-            role: req.body.role
+            password: req.body.password
         })
         washer.save()
             .then((data)=>{
