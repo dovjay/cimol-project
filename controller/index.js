@@ -11,7 +11,8 @@ class Controller {
             })
     }
     static logout(req, res) {
-        req.session.role = undefined
+        req.session.role = null
+        req.session.identifier = null
         res.redirect('/')
     }
 
@@ -134,7 +135,8 @@ class Controller {
             lastName: req.body.lastname,
             email: req.body.email,
             username: req.body.username,
-            password: req.body.password
+            password: req.body.password,
+            salt: crypto.randomBytes(256) // baru
         })
         washer.save()
             .then((data)=>{
@@ -185,20 +187,13 @@ class Controller {
     }
     static acceptOrder(req, res) {
         let id = req.params.userId
-        Model.Transaction.findAll({
+        Model.Transaction.update({
+            WasherId: Number(req.session.identifier)
+        }, {
             where: {UserId: id}
         })
-            .then(transaction => {
-                let id = Number(req.session.identifier)
-                transaction.forEach(element => {
-                    element.WasherId = id
-                    res.send(element)
-                })
-                res.send(transaction)
-                // return transaction.save()
-            })
             .then(() => {
-                // res.redirect('/washer/workstart')
+                res.redirect('/washer/workstart')
             })
             .catch(err => {
                 res.send(err)
@@ -212,9 +207,12 @@ class Controller {
     }
     static completework(req, res) {
         let id = req.session.identifier
-        Model.Transaction.findAll({where: {WasherId: id}})
+        Model.Transaction.update(
+            { complete: 1 },
+            {where: {WasherId: id}
+        })
             .then(data => {
-                res.send(data)
+                res.redirect('/')
             })
             .catch(err => {
                 res.send(err)
