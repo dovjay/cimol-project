@@ -4,7 +4,6 @@ class Controller {
 
     //Home
     static toHome(req, res) {
-        let sessionRole = req.session.role
         Model.Service.findAll()
             .then(data => {
                 let sessionRole = req.session.role
@@ -157,6 +156,7 @@ class Controller {
                 if (data) {
                     req.session.role = 'washer'
                     req.session.identifier = data.dataValues.id
+                    console.log(req.session)
                     res.redirect('/')
                 } else {
                     let err = 'username atau password salah!'
@@ -164,7 +164,7 @@ class Controller {
                 }
             })
             .catch(err => {
-                res.send('login gagal')
+                res.send(err)
             })
     }
     static getWasherOrderList(req, res) {
@@ -177,12 +177,50 @@ class Controller {
             }]
         })
             .then(data => {
+                res.render('pages/order_list_washer', {data})
+            })
+            .catch(err => {
+                res.send(err)
+            })
+    }
+    static acceptOrder(req, res) {
+        let id = req.params.userId
+        Model.Transaction.findAll({
+            where: {UserId: id}
+        })
+            .then(transaction => {
+                let id = Number(req.session.identifier)
+                transaction.forEach(element => {
+                    element.WasherId = id
+                    res.send(element)
+                })
+                res.send(transaction)
+                // return transaction.save()
+            })
+            .then(() => {
+                // res.redirect('/washer/workstart')
+            })
+            .catch(err => {
+                res.send(err)
+            })
+    }
+    static workstart(req, res) {
+        res.render('pages/workstart')
+    }
+    static workdone(req, res) {
+        res.render('pages/workdone')
+    }
+    static completework(req, res) {
+        let id = req.session.identifier
+        Model.Transaction.findAll({where: {WasherId: id}})
+            .then(data => {
                 res.send(data)
             })
             .catch(err => {
                 res.send(err)
             })
     }
+
 
     //Transaction
     static renderTransaction(req, res) {
