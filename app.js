@@ -3,10 +3,12 @@ const app = express()
 const port = 3000
 const routes = require('./routes')
 
-//hello
 app.set('view engine', 'ejs')
+
 app.use(express.urlencoded({extended:false}))
-app.use('/', routes)
+
+app.use('', routes)
+
 app.listen(port, function(){
-    console.log('listen in port ' + port)
+    console.log('listening on port ' + port)
 })
