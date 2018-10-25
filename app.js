@@ -10,7 +10,8 @@ app.use(express.static(__dirname + '/public'))
 
 app.use(session({
     secret: 'apa nich',
-    role: null         
+    role: null,
+    identifier: null
 }))
 
 app.use(express.urlencoded({extended:false}))

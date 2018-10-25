@@ -9,6 +9,9 @@
 </head>
 <body>
   <section>
+    <% if (err) { %>
+      <p class="error"><%=err%></p>
+    <% } %>
     <h1>Login User Here</h1>
     <form action="" method="POST">
       <label for="">Username</label><br>
