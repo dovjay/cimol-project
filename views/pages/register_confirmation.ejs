@@ -9,11 +9,8 @@
 </head>
 <body>
   <section>
-    <% if (err) { %>
-      <p class="error"><%=err%></p>
-    <% } %>
-    <h1>Washer Register Page</h1>
-    <form action="/washer/add" method="POST">
+    <h1>Confirmation</h1>
+    <form action="/user/add" method="POST">
       <label for="username">Username</label><br>
       <input type="text" name="username"><br>
       <label for="password">Password</label><br>
@@ -25,8 +22,8 @@
       <label for="">Last Name</label><br>
       <input type="text" name="lastname"><br>
       <button>Register</button>
+      <button>Cancel</button>
     </form>
-    Or, <a href="/user/add">Sign up as User</a>
   </section>
 </body>
 </html>

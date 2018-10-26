@@ -10,41 +10,28 @@
 <body>
   <%- include('../partials/header') %>
   <section>
+    <% if (name) { %>
+      <h1>Hi, <%=name%></h1>
+    <% } %>
     <h1>Welcome to CiMol Project!</h1>
-    <h2>Our Services</h2>
-    <form action="" method="POST">
-      <div id="services">
-        <div class="box">
-          <p>Car Wash</p>
-          <p>Cost: Rp 10000</p>
-          <p>Estimate: 30 menit</p>
-          <div class="check"><input type="checkbox" name="order" value="id">Order</div>
+    <% if (sessionRole != 'washer') { %>
+      <h2>Our Services</h2>
+      <form action="/transaction" method="POST">
+        <div id="services">
+          <% data.forEach(element => { %>
+            <div class="box">
+              <h3> <%= element.name %> </h3>
+              <p>Cost: <%= element.cost %> </p>
+              <p>Estimate: <%= element.estimate %> menit</p>
+              <div class="check"><input type="checkbox" name="order" value="<%=element.id%>">Order</div>
+            </div>
+          <% }) %>
         </div>
-        <div class="box">
-          <p>Car Wash</p>
-          <p>Cost: Rp 10000</p>
-          <p>Estimate: 30 menit</p>
-          <div class="check"><input type="checkbox" name="order" value="id">Order</div>
-        </div>
-        <div class="box">
-          <p>Car Wash</p>
-          <p>Cost: Rp 10000</p>
-          <p>Estimate: 30 menit</p>
-          <div class="check"><input type="checkbox" name="order" value="id">Order</div>
-        </div>
-        <% data.forEach(element => { %>
-          <div class="box">
-            <p> <%= element.name %> </p>
-            <p> <%= element.price %> </p>
-            <p> <%= element.estimate %> </p>
-            <div class="check"><input type="checkbox" name="order" value="<%=element.id%>">Order</div>
-          </div>
-        <% }) %>
-      </div>
-      <label for="location">Location</label><br>
-      <input type="text" name="location"><br>
-      <button type="submit">Done</button>
-    </form>
+        <label for="location">Location</label><br>
+        <input type="text" name="location"><br>
+        <button type="submit">Done</button>
+      </form>
+    <% } %>
   </section>
   <%- include('../partials/footer') %>
 </body>

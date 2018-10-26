@@ -1,6 +1,6 @@
 const express = require('express')
 const app = express()
-const port = 3000
+const port = process.env.PORT || 3000
 const routes = require('./routes')
 const session = require('express-session')
 
@@ -10,7 +10,10 @@ app.use(express.static(__dirname + '/public'))
 
 app.use(session({
     secret: 'apa nich',
-    role: null         
+    role: null,
+    userEmail: null,
+    identifier: null,
+    name: null
 }))
 
 app.use(express.urlencoded({extended:false}))

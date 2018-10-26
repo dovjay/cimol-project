@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Order List Washer</title>
+    <link rel="stylesheet" type="text/css" href="/css/main.css">
+</head>
+<body>
+    <h1>Order List</h1>
+    <table border="solid black">
+        <tr>
+            <th>Name</th>
+            <th>Order</th>
+            <th>Location</th>
+            <th>Option</th>
+        </tr>
+        <% data.forEach(element => { %>
+            <tr>
+                <td><%= element.firstName + ' ' + element.lastName %></td>
+                <td>
+                    <ol>
+                        <% element.Services.forEach(theService => { %>
+                            <li><%=theService.name%></li>
+                        <% }) %>
+                    </ol>
+                </td>
+                <% if (element.Services.length > 0) { %>
+                    <td><%= element.Services[0].Transaction.location %></td>
+                <% } %>
+                <td>
+                    <form action="/washer/accept/<%=element.id%>" method="POST">
+                    <button type="submit">Accept</button></form>
+                </td>
+            </tr>
+        <% }) %>
+    </table>
+</body>
+</html>

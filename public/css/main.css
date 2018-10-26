@@ -12,6 +12,7 @@ header {
   padding: 20px;
 }
 header a, header a:visited {
+  margin: 0 10px;
   color: black;
 }
 header a:hover {
@@ -33,12 +34,13 @@ section {
   display: flex;
   flex-direction: column;
   align-items: center;
-  height: 38vw;
+  min-height: 700px;
 }
 .box {
   border: 3px solid black;
   padding: 20px;
   width: 200px;
+  height: 150px;
   display: grid;
 }
 .box p {
@@ -73,10 +75,9 @@ button:active {
   grid-template-columns: repeat(3, 300px);
   grid-gap: 10px;
   justify-items: center;
+  
 }
 form {
-  border: 3px solid black;
-  border-radius: 20px;
   padding: 50px;
   font-size: 1.2em;
   text-align: center;
@@ -86,4 +87,15 @@ footer {
   color: white;
   padding: 30px;
   text-align: center;
+}
+.error {
+  color: red;
+  font-size: 1.5em;
+}
+table, tr, th, td {
+  font-size: 1.2em;
+  border: 3px solid black;
+  border-collapse: collapse;
+  padding: 10px;
+  margin: 20px;
 }
