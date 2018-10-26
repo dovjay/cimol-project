@@ -9,6 +9,9 @@
 </head>
 <body>
   <section>
+    <% if (err) { %>
+      <p class="error"><%=err%></p>
+    <% } %>
     <h1>Washer Register Page</h1>
     <form action="/washer/add" method="POST">
       <label for="username">Username</label><br>
