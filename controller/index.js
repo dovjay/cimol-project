@@ -57,6 +57,7 @@ class Controller {
         user.save()
             .then((user) => {
                 req.session.role = 'user'
+                req.session.userEmail = user.email
                 req.session.identifier = user.id
                 req.session.name = user.firstName + " " + user.lastName
                 res.redirect('/')
@@ -116,17 +117,18 @@ class Controller {
                 if (data) {
                     if (pass.password == data.password) {
                         req.session.role = 'user'
+                        req.session.userEmail = data.dataValues.email
                         req.session.name = data.firstName + " " + data.lastName
                         req.session.identifier = data.dataValues.id
                         console.log(req.session)
                         res.redirect('/')   
                     } else {
-                        let err = 'username atau password salah!'
-                        res.render('pages/login_user', { err })    
+                        let error = 'username atau password salah!'
+                        res.render('pages/login_user', { error })    
                     }
                 } else {
-                    let err = 'username atau password salah!'
-                    res.render('pages/login_user', { err })
+                    let error = 'username atau password salah!'
+                    res.render('pages/login_user', { error })
                 }
             })
             .catch(err => {
@@ -188,6 +190,7 @@ class Controller {
             .then((washer) => {
                 req.session.role = 'washer'
                 req.session.identifier = washer.id
+                req.session.userEmail = washer.email
                 req.session.name = washer.firstName + " " + washer.lastName
                 res.redirect('/')
             })
@@ -208,6 +211,7 @@ class Controller {
                     if (pass.password == data.password) {
                         req.session.role = 'washer'
                         req.session.identifier = data.dataValues.id
+                        req.session.userEmail = data.dataValues.email
                         req.session.name = data.firstName + " " + data.lastName
                         console.log(req.session)
                         res.redirect('/')   

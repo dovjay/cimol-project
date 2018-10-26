@@ -11,6 +11,7 @@ app.use(express.static(__dirname + '/public'))
 app.use(session({
     secret: 'apa nich',
     role: null,
+    userEmail: null,
     identifier: null,
     name: null
 }))
