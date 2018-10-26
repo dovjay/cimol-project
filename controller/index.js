@@ -6,11 +6,31 @@ class Controller {
 
     //Home
     static toHome(req, res) {
-        Model.Service.findAll()
-            .then(data => {
-                let sessionRole = req.session.role
-                res.render('pages', { data, sessionRole })
-            })
+        let sessionRole = req.session.role
+        let name = req.session.name
+        if (sessionRole) {
+            if (sessionRole == 'user') {
+                Model.Service.findAll()
+                    .then(data => {
+                        res.render('pages', { data, sessionRole, name })
+                    })
+                    .catch(err => {
+                        res.send(err)
+                    })
+            } else {
+                let data = null
+                res.render('pages', { data, sessionRole, name })
+            }
+        } else {
+            let name = null
+            Model.Service.findAll()
+                    .then(data => {
+                        res.render('pages', { data, sessionRole, name })
+                    })
+                    .catch(err => {
+                        res.send(err)
+                    })
+        }        
     }
     
     // logout pleassseee
@@ -22,7 +42,7 @@ class Controller {
 
     //USER
     static addUser(req, res) {
-        res.render('pages/sign_up_user', {})
+        res.render('pages/sign_up_user')
     }
     static postAddUser(req, res) {
         let pass = passwordHash(req.body.password)
@@ -35,9 +55,11 @@ class Controller {
             salt: pass.salt // baru
         })
         user.save()
-            .then(() => {
+            .then((user) => {
                 req.session.role = 'user'
+                req.session.userEmail = user.email
                 req.session.identifier = user.id
+                req.session.name = user.firstName + " " + user.lastName
                 res.redirect('/')
             })
             .catch((err) => {
@@ -84,8 +106,8 @@ class Controller {
             })
     }
     static loginUser(req, res) {
-        let err
-        res.render('pages/login_user', { err })
+        let error
+        res.render('pages/login_user', { error })
     }
     static postLoginUser(req, res) {
         let username = req.body.username
@@ -95,20 +117,23 @@ class Controller {
                 if (data) {
                     if (pass.password == data.password) {
                         req.session.role = 'user'
+                        req.session.userEmail = data.dataValues.email
+                        req.session.name = data.firstName + " " + data.lastName
                         req.session.identifier = data.dataValues.id
                         console.log(req.session)
                         res.redirect('/')   
                     } else {
-                        let err = 'username atau password salah!'
-                        res.render('pages/login_user', { err })    
+                        let error = 'username atau password salah!'
+                        res.render('pages/login_user', { error })    
                     }
                 } else {
-                    let err = 'username atau password salah!'
-                    res.render('pages/login_user', { err })
+                    let error = 'username atau password salah!'
+                    res.render('pages/login_user', { error })
                 }
             })
             .catch(err => {
-                res.send(err)
+                let error = 'username atau password salah!'
+                res.render('pages/login_user', { error })
             })
     }
     static renderUserOrder(req, res) {
@@ -162,9 +187,11 @@ class Controller {
             salt: pass.salt // baru
         })
         washer.save()
-            .then(() => {
+            .then((washer) => {
                 req.session.role = 'washer'
                 req.session.identifier = washer.id
+                req.session.userEmail = washer.email
+                req.session.name = washer.firstName + " " + washer.lastName
                 res.redirect('/')
             })
             .catch((err) => {
@@ -172,8 +199,8 @@ class Controller {
             })
     }
     static loginWasher(req, res) {
-        let err
-        res.render('pages/login_washer', { err })
+        let error
+        res.render('pages/login_washer', { error })
     }
     static sessionLoginWasher(req, res) {
         let username = req.body.username
@@ -184,6 +211,8 @@ class Controller {
                     if (pass.password == data.password) {
                         req.session.role = 'washer'
                         req.session.identifier = data.dataValues.id
+                        req.session.userEmail = data.dataValues.email
+                        req.session.name = data.firstName + " " + data.lastName
                         console.log(req.session)
                         res.redirect('/')   
                     } else {
@@ -196,7 +225,8 @@ class Controller {
                 }
             })
             .catch(err => {
-                res.send(err)
+                let error = 'username atau password salah!'
+                res.render('pages/login_washer', { error })
             })
     }
     static getWasherOrderList(req, res) {

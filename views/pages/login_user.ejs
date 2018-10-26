@@ -9,11 +9,11 @@
 </head>
 <body>
   <section>
-    <% if (err) { %>
-      <p class="error"><%=err%></p>
+    <% if (error) { %>
+      <p class="error"><%=error%></p>
     <% } %>
     <h1>Login User Here</h1>
-    <form action="" method="POST">
+    <form action="/user/login" method="POST">
       <label for="">Username</label><br>
       <input type="text" name="username"><br>
       <label for="">Password</label><br>
