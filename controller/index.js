@@ -216,12 +216,12 @@ class Controller {
                         console.log(req.session)
                         res.redirect('/')   
                     } else {
-                        let err = 'username atau password salah!'
-                        res.render('pages/login_washer', { err })    
+                        let error = 'username atau password salah!'
+                        res.render('pages/login_washer', { error })    
                     }
                 } else {
-                    let err = 'username atau password salah!'
-                    res.render('pages/login_washer', { err })
+                    let error = 'username atau password salah!'
+                    res.render('pages/login_washer', { error })
                 }
             })
             .catch(err => {
@@ -247,10 +247,12 @@ class Controller {
     }
     static acceptOrder(req, res) {
         let id = req.params.userId
-        Model.Transaction.findAll({
+        Model.Transaction.update({
+            WasherId: req.session.identifier
+        }, {
             where: { UserId: id }
         })
-            .then(() => {
+            .then((data) => {
                 res.redirect('/washer/workstart')
             })
             .catch(err => {

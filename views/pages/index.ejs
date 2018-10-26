@@ -38,9 +38,9 @@
           </div> -->
           <% data.forEach(element => { %>
             <div class="box">
-              <p> <%= element.name %> </p>
-              <p> <%= element.cost %> </p>
-              <p> <%= element.estimate %> </p>
+              <h3> <%= element.name %> </h3>
+              <p>Cost: <%= element.cost %> </p>
+              <p>Estimate: <%= element.estimate %> menit</p>
               <div class="check"><input type="checkbox" name="order" value="<%=element.id%>">Order</div>
             </div>
           <% }) %>
