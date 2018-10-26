@@ -135,7 +135,7 @@
                                             <tbody>
                                                 <tr>
                                                     <td align="left">
-                                                        <img src="http://www.supah.it/dribbble/017/logo.png" width="32" height="32" alt="logo" border="0" />
+                                                        <img src="https://image.flaticon.com/icons/svg/1169/1169415.svg" width="32" height="32" alt="logo" border="0" />
                                                     </td>
                                                 </tr>
                                                 <tr class="hiddenMobile">
@@ -242,7 +242,8 @@
                                                 <td height="10" colspan="4"></td>
                                             </tr>
                                             <%var total = 0%>
-                                                <% for (let i=0; i<data.Services.length; i++){ total+=data.Services[i].cost %>
+                                            <%var time1 = 0%>
+                                                <% for (let i=0; i<data.Services.length; i++){ total+=data.Services[i].cost ; time1+=data.Services[i].estimate %>
                                             <tr>
                                                 <td style="font-size: 12px; font-family: 'Open Sans', sans-serif; color: #ff0000;  line-height: 18px;  vertical-align: top; padding:10px 0;"
                                                     class="article"><%= data.Services[i].name %></td>
@@ -293,6 +294,15 @@
                                             <td style="font-size: 12px; font-family: 'Open Sans', sans-serif; color: #646a6e; line-height: 22px; vertical-align: top; text-align:right; white-space:nowrap;"
                                                 width="80">
                                                 <%=total%>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-size: 12px; font-family: 'Open Sans', sans-serif; color: #646a6e; line-height: 22px; vertical-align: top; text-align:right; ">
+                                                Estimated Time 
+                                            </td>
+                                            <td style="font-size: 12px; font-family: 'Open Sans', sans-serif; color: #646a6e; line-height: 22px; vertical-align: top; text-align:right; white-space:nowrap;"
+                                                width="80">
+                                                <%= time1 + ' Minutes' %>
                                             </td>
                                         </tr>
                                     </tbody>
