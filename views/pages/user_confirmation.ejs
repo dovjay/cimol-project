@@ -2,54 +2,38 @@
 <html>
 
 <head>
-    <style>
-        table {
-            font-family: arial, sans-serif;
-            border-collapse: collapse;
-            width: 100%;
-        }
-
-        td,
-        th {
-            border: 1px solid #dddddd;
-            text-align: left;
-            padding: 8px;
-        }
-
-        tr:nth-child(even) {
-            background-color: #dddddd;
-        }
-    </style>
+    <link  rel="stylesheet" type="text/css" href="/css/main.css">
 </head>
 
 <body>
+    <section>
+        <h2>Order Confirmation</h2>
 
-    <h2>Order Confirmation</h2>
+        <table>
+            <tr>
+                <th>Services</th>
+                <th>Option</th>
+            </tr>
+            <% for(let i=0; i<data.Services.length; i++){ %>
+                <% var delet = `/order/delete/${data.Services[i].id}` %>
+                    <tr>
+                        <td>
+                            <%= data.Services[i].name %>
+                        </td>
+                        <td>
+                            <a href="<%= delet %>" onclick="return confirm('are you sure want to delete this order?')">Delete</a>
+                        </td>
+                    </tr>
+                    <%}%>
+        </table>
 
-    <table>
-        <tr>
-            <th>Services</th>
-            <th>Option</th>
-        </tr>
-        <% for(let i=0; i<data.Services.length; i++){ %>
-            <% var delet = `/order/delete/${data.Services[i].id}` %>
-                <tr>
-                    <td>
-                        <%= data.Services[i].name %>
-                    </td>
-                    <td>
-                        <a href="<%= delet %>" onclick="return confirm('are you sure want to delete this order?')">Delete</a>
-                    </td>
-                </tr>
-                <%}%>
-    </table>
+        <a href="/order/cancel" onclick="return confirm('are you sure want to cancel this order?')">cancel</a>
 
-    <a href="order/cancel" onclick="return confirm('are you sure want to cancel this order?')">cancel</a>
-
-    <form action="<%= `https://formspree.io/${email}` %>" method="POST">
-        <input type="text" name="THANKS" style="display: none" value="thank you for using our Services, your order has been received. Please wait until one of our Washer clean your car.">
-        <input type="submit" value="SUBMIT">
-    </form>
+        <form action="<%= `https://formspree.io/${email}` %>" method="POST">
+            <input type="text" name="THANKS" style="display: none" value="thank you for using our Services, your order has been received. Please wait until one of our Washer clean your car.">
+            <button type="submit" value="SUBMIT">SUBMIT</button>
+        </form>
+    </section>
 
 </body>
 

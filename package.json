@@ -23,5 +23,8 @@
     "nodemon": "^1.18.4",
     "pg": "^7.5.0",
     "sequelize": "^4.41.0"
+  },
+  "script": {
+    "start": "node app.js"
   }
 }

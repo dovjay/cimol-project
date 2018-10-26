@@ -42,7 +42,8 @@ class Controller {
 
     //USER
     static addUser(req, res) {
-        res.render('pages/sign_up_user')
+        let err = null
+        res.render('pages/sign_up_user', {err})
     }
     static postAddUser(req, res) {
         let pass = passwordHash(req.body.password)
@@ -63,7 +64,8 @@ class Controller {
                 res.redirect('/')
             })
             .catch((err) => {
-                res.send(err)
+                console.log("==============>",err)
+                res.render('pages/sign_up_user', {err})
             })
     }
 
@@ -174,7 +176,8 @@ class Controller {
 
     // WASHER
     static renderAddWasher(req, res) {
-        res.render('pages/sign_up_washer')
+        let err = null
+        res.render('pages/sign_up_washer', {err})
     }
     static postAddWasher(req, res) {
         let pass = passwordHash(req.body.password)
@@ -195,7 +198,8 @@ class Controller {
                 res.redirect('/')
             })
             .catch((err) => {
-                res.send(err)
+                console.log("==============>",err)
+                res.render('pages/sign_up_washer', {err})
             })
     }
     static loginWasher(req, res) {
